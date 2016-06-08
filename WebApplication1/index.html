@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Whatsapp</title>
+</head>
+<body>
+    <table >
+        <tr>
+            <td> Usuario</td>
+            <td> <input id="txtPhoneNumber" type="text" /></td> 
+        </tr>
+        <tr>
+            <td> Contraseña</td>
+            <td> <input id="txtPassword" type="password"  /></td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td> <input type="button" id="btnLogin" value="Login" /></td>
+        </tr>
+
+
+    </table>
+
+
+    <table>
+        <tr>
+            <td> De</td>
+            <td> <input id="txtTo" type="text" /></td>
+        </tr>
+        <tr>
+            <td> Mensaje</td>
+            <td> <input id="txtMsg" type="text" /></td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td> <input type="button" id="btnEnviar" value="Enviar" /></td>
+        </tr>
+        
+    </table>
+
+    <ul id="estado"> </ul>
+    <script src="/Scripts/jquery-1.6.4.min.js"></script>
+    <script src="/Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script  src="/signalr/hubs"></script>
+
+    <script type="text/javascript">
+
+        $(function () {
+            var chat = $.connection.chatHub;
+            chat.client.notifyMessage = function (message) {
+
+                var endCodeMessage = $('<div />').text(message).html();
+                $('status').append('<li>' + message + '</li>');
+            };
+
+            $.connection.hub.start().done(function () {
+                $('btnLogin').click(function () {
+                    var phoneNumber = document.getElementById('txtPhoneNumber').value;
+                    var pass = document.getElementById('txtPassword').value;
+                    chat.server.login(phoneNumber, pass);
+                });
+
+                $('btnEnviar').click(function () {
+                    var para = document.getElementById('txtTo').value;
+                    var msg = document.getElementById('txtMsg').value;
+
+                    chat.server.send(to, msg);
+
+                });
+
+            });
+
+        });
+
+    </script>
+
+</body>
+</html>
